@@ -60,6 +60,6 @@ with dag:
         })
         ],
         volume_mounts=[
-            VolumeMount("azure_managed_disk_haleytek_gate", “/usr/local/tmp", sub_path=None, read_only=False)
+            VolumeMount("azure_managed_disk_haleytek_gate", "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
