@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow import configuration as conf
 from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
+from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
 
 default_args = {
     'owner': 'airflow',
