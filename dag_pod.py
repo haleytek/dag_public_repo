@@ -49,7 +49,7 @@ with dag:
         config_file=config_file,
         resources=compute_resources,
         is_delete_operator_pod=True,
-        get_logs=True
+        get_logs=True,
         volumes=[
             Volume(“azure-managed-disk-haleytek-gate",
                 {
