@@ -38,7 +38,9 @@ compute_resources = \
 with dag:
     k = KubernetesPodOperator(
         namespace=namespace,
-        image="hello-world",
+        image="ubuntu:16.04",
+        cmds=["bash", "-cx"],
+        arguments=["echo", "hello world", ">>", "PV.txt", "&&", "ls", "-la", "/usr/local/tmp" ],
         labels={"foo": "bar"},
         name="airflow-test-pod",
         task_id="task-one",
