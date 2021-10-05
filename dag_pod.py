@@ -47,4 +47,17 @@ with dag:
         config_file=config_file,
         resources=compute_resources,
         is_delete_operator_pod=True,
-        get_logs=True)
+        get_logs=True
+        volumes=[
+            Volume(“azure-managed-disk-haleytek-gate",
+                {
+                "persistentVolumeClaim":
+                {
+                    "claimName": “azure-managed-disk-haleytek-gate"
+                }
+        })
+        ],
+        volume_mounts=[
+            VolumeMount(“azure-managed-disk-haleytek-gate", “/usr/local/tmp", sub_path=None, read_only=False)
+        ]
+    )
