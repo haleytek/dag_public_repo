@@ -53,7 +53,7 @@ with dag:
         is_delete_operator_pod=True,
         get_logs=True,
         volumes=[
-            Volume("azure_managed_disk_haleytek_gate",
+            Volume("azure-managed-disk-haleytek-gate",
                 {
                 "persistentVolumeClaim":
                 {
@@ -62,6 +62,6 @@ with dag:
         })
         ],
         volume_mounts=[
-            VolumeMount("azure_managed_disk_haleytek_gate", "/usr/local/tmp", sub_path=None, read_only=False)
+            VolumeMount("azure-managed-disk-haleytek-gate", "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
