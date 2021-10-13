@@ -71,7 +71,7 @@ with dag:
         namespace=namespace,
         image="ubuntu:16.04",
         cmds=["bash", "-cx"],
-        arguments=["cd /usr/local/tmp && git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
+        arguments=["cd /usr/local/tmp && sudo apt-get -y update && sudo apt-get -y install git && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
         #arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
         labels={"foo": "bar"},
         name="airflow-test-pod",
