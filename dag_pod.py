@@ -38,7 +38,7 @@ compute_resources = \
   'limit_memory': '3Gi'}
 
 with dag:
-    k = KubernetesPodOperator(
+    first_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
         cmds=["bash", "-cx"],
@@ -46,7 +46,7 @@ with dag:
         #arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
         labels={"foo": "bar"},
         name="airflow-test-pod",
-        task_id="task-one",
+        task_id="first_task",
         in_cluster=in_cluster, # if set to true, will look in the cluster, if false, looks for file
         cluster_context='airflowpool-admin', # is ignored when in_cluster is set to True
         config_file=config_file,
@@ -66,3 +66,34 @@ with dag:
             VolumeMount("azure-managed-disk-haleytek-gate", "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
+
+    second_task = KubernetesPodOperator(
+        namespace=namespace,
+        image="ubuntu:16.04",
+        cmds=["bash", "-cx"],
+        arguments=["cd /usr/local/tmp && git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
+        #arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
+        labels={"foo": "bar"},
+        name="airflow-test-pod",
+        task_id="second_task",
+        in_cluster=in_cluster, # if set to true, will look in the cluster, if false, looks for file
+        cluster_context='airflowpool-admin', # is ignored when in_cluster is set to True
+        config_file=config_file,
+        resources=compute_resources,
+        is_delete_operator_pod=True,
+        get_logs=True,
+        volumes=[
+            Volume("azure-managed-disk-haleytek-gate",
+                {
+                "persistentVolumeClaim":
+                {
+                    "claimName": "azure-managed-disk-haleytek-gate"
+                }
+        })
+        ],
+        volume_mounts=[
+            VolumeMount("azure-managed-disk-haleytek-gate", "/usr/local/tmp", sub_path=None, read_only=False)
+        ]
+    )
+
+    first_task >> second_task
