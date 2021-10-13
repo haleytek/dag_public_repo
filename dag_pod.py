@@ -1,12 +1,12 @@
-from pprint import pprint
-from airflow import DAG
 from datetime import datetime, timedelta
+from pprint import pprint
 
-from airflow.operators.python import BranchPythonOperator
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow import DAG
 from airflow import configuration as conf
+from airflow.operators.python import BranchPythonOperator
 from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
 from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
 default_args = {
     'owner': 'airflow',
@@ -44,11 +44,13 @@ with dag:
     def branch_func(**kwargs):
         pprint(kwargs['dag_run'].conf)
         trigger_params = kwargs['dag_run'].conf
-        if "branch" in trigger_params.keys() and trigger_params.get("branch") == "first":
-            return "first_task"
+        if "branch" in trigger_params.keys():
+            if trigger_params.get("branch") == "first":
+                return "first_task"
+            else:
+                return "second_task"
         else:
             return "second_task"
-
 
     branch_op = BranchPythonOperator(
         task_id="branch_task",
