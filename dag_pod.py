@@ -1,6 +1,7 @@
+from pprint import pprint
 from airflow import DAG
 from datetime import datetime, timedelta
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator, BranchPythonOperator
 from airflow import configuration as conf
 from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
 from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
@@ -38,6 +39,18 @@ compute_resources = \
      'limit_memory': '3Gi'}
 
 with dag:
+
+    def branch_func(**kwargs):
+            pprint(kwargs['dag_run'].conf)
+            return "first_task"
+        
+
+    branch_op = BranchPythonOperator(
+        task_id="branch_task",
+        python_callable=branch_func,
+        provide_context=True
+    )
+
     first_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
@@ -102,4 +115,6 @@ with dag:
         ]
     )
 
+    
+    branch_op >> first_task
     first_task >> second_task
