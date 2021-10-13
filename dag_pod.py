@@ -19,12 +19,12 @@ namespace = conf.get('kubernetes', 'NAMESPACE')
 
 # This will detect the default namespace locally and read the
 # environment namespace when deployed to Astronomer.
-if namespace =='default':
+if namespace == 'default':
     config_file = '/opt/bitnami/airflow/.kube/config'
-    in_cluster=False
+    in_cluster = False
 else:
-    in_cluster=True
-    config_file=None
+    in_cluster = True
+    config_file = None
 
 dag = DAG('kube_pod',
           schedule_interval='@once',
@@ -32,38 +32,42 @@ dag = DAG('kube_pod',
 
 # This is where we define our desired resources.
 compute_resources = \
-  {'request_cpu': '800m',
-  'request_memory': '3Gi',
-  'limit_cpu': '800m',
-  'limit_memory': '3Gi'}
+    {'request_cpu': '800m',
+     'request_memory': '3Gi',
+     'limit_cpu': '800m',
+     'limit_memory': '3Gi'}
 
 with dag:
     first_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
         cmds=["bash", "-cx"],
-        arguments=["ls -la /usr/local/tmp && echo hello world >> /usr/local/tmp/PV.txt && ls -la /usr/local/tmp && cat /usr/local/tmp/PV.txt"],
+        arguments=[
+            "ls -la /usr/local/tmp && echo hello world >> /usr/local/tmp/PV.txt && ls -la /usr/local/tmp && cat /usr/local/tmp/PV.txt"],
         #arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
         labels={"foo": "bar"},
         name="airflow-test-pod",
         task_id="first_task",
-        in_cluster=in_cluster, # if set to true, will look in the cluster, if false, looks for file
-        cluster_context='airflowpool-admin', # is ignored when in_cluster is set to True
+        # if set to true, will look in the cluster, if false, looks for file
+        in_cluster=in_cluster,
+        # is ignored when in_cluster is set to True
+        cluster_context='airflowpool-admin',
         config_file=config_file,
         resources=compute_resources,
         is_delete_operator_pod=True,
         get_logs=True,
         volumes=[
             Volume("azure-managed-disk-haleytek-gate",
-                {
-                "persistentVolumeClaim":
-                {
-                    "claimName": "azure-managed-disk-haleytek-gate"
-                }
-        })
+                   {
+                       "persistentVolumeClaim":
+                       {
+                        "claimName": "azure-managed-disk-haleytek-gate"
+                       }
+                   })
         ],
         volume_mounts=[
-            VolumeMount("azure-managed-disk-haleytek-gate", "/usr/local/tmp", sub_path=None, read_only=False)
+            VolumeMount("azure-managed-disk-haleytek-gate",
+                        "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
 
@@ -71,28 +75,30 @@ with dag:
         namespace=namespace,
         image="ubuntu:16.04",
         cmds=["bash", "-cx"],
-        arguments=["cd /usr/local/tmp && apt-get -y update && apt-get -y install git && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
-        #arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
+        arguments=["cd /usr/local/tmp && apt-get -y update && apt-get -y install git build-essential && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
         labels={"foo": "bar"},
         name="airflow-test-pod",
         task_id="second_task",
-        in_cluster=in_cluster, # if set to true, will look in the cluster, if false, looks for file
-        cluster_context='airflowpool-admin', # is ignored when in_cluster is set to True
+        # if set to true, will look in the cluster, if false, looks for file
+        in_cluster=in_cluster,
+        # is ignored when in_cluster is set to True
+        cluster_context='airflowpool-admin',
         config_file=config_file,
         resources=compute_resources,
         is_delete_operator_pod=True,
         get_logs=True,
         volumes=[
             Volume("azure-managed-disk-haleytek-gate",
-                {
-                "persistentVolumeClaim":
-                {
-                    "claimName": "azure-managed-disk-haleytek-gate"
-                }
-        })
+                   {
+                       "persistentVolumeClaim":
+                       {
+                        "claimName": "azure-managed-disk-haleytek-gate"
+                       }
+                   })
         ],
         volume_mounts=[
-            VolumeMount("azure-managed-disk-haleytek-gate", "/usr/local/tmp", sub_path=None, read_only=False)
+            VolumeMount("azure-managed-disk-haleytek-gate",
+                        "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
 
