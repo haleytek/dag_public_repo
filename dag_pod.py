@@ -41,15 +41,14 @@ compute_resources = \
      'limit_memory': '3Gi'}
 
 with dag:
-
     def branch_func(**kwargs):
-            pprint(kwargs['dag_run'].conf)
-            trigger_params = kwargs['dag_run'].conf
-            if "branch" in trigger_params.keys() and trigger_params.get("branch") == "first":
-                return "first_task"
-            else:
-                return "second_task"
-        
+        pprint(kwargs['dag_run'].conf)
+        trigger_params = kwargs['dag_run'].conf
+        if "branch" in trigger_params.keys() and trigger_params.get("branch") == "first":
+            return "first_task"
+        else:
+            return "second_task"
+
 
     branch_op = BranchPythonOperator(
         task_id="branch_task",
@@ -63,7 +62,7 @@ with dag:
         cmds=["bash", "-cx"],
         arguments=[
             "ls -la /usr/local/tmp && echo hello world >> /usr/local/tmp/PV.txt && ls -la /usr/local/tmp && cat /usr/local/tmp/PV.txt"],
-        #arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
+        # arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
         labels={"foo": "bar"},
         name="airflow-test-pod",
         task_id="first_task",
@@ -79,9 +78,9 @@ with dag:
             Volume("azure-managed-disk-haleytek-gate",
                    {
                        "persistentVolumeClaim":
-                       {
-                        "claimName": "azure-managed-disk-haleytek-gate"
-                       }
+                           {
+                               "claimName": "azure-managed-disk-haleytek-gate"
+                           }
                    })
         ],
         volume_mounts=[
@@ -94,7 +93,8 @@ with dag:
         namespace=namespace,
         image="ubuntu:16.04",
         cmds=["bash", "-cx"],
-        arguments=["cd /usr/local/tmp && apt-get -y update && apt-get -y install git build-essential && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
+        arguments=[
+            "cd /usr/local/tmp && apt-get -y update && apt-get -y install git build-essential && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
         labels={"foo": "bar"},
         name="airflow-test-pod",
         task_id="second_task",
@@ -110,9 +110,9 @@ with dag:
             Volume("azure-managed-disk-haleytek-gate",
                    {
                        "persistentVolumeClaim":
-                       {
-                        "claimName": "azure-managed-disk-haleytek-gate"
-                       }
+                           {
+                               "claimName": "azure-managed-disk-haleytek-gate"
+                           }
                    })
         ],
         volume_mounts=[
@@ -121,6 +121,4 @@ with dag:
         ]
     )
 
-    
-    branch_op >> first_task
-    first_task >> second_task
+    branch_op >> [first_task, second_task]
