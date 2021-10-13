@@ -44,7 +44,11 @@ with dag:
 
     def branch_func(**kwargs):
             pprint(kwargs['dag_run'].conf)
-            return "first_task"
+            trigger_params = kwargs['dag_run'].conf
+            if "branch" in trigger_params.keys() and trigger_params.get("branch") == "first":
+                return "first_task"
+            else:
+                return "second_task"
         
 
     branch_op = BranchPythonOperator(
