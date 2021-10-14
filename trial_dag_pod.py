@@ -55,12 +55,12 @@ with dag:
     #         return "second_task"
     #     #return first_task
 
-    branch_op = BranchPythonOperator(
-        task_id="branch_task",
-        #python_callable=branch_func,
-        python_callable="first_task",
-        provide_context=True
-    )
+    # branch_op = BranchPythonOperator(
+    #     task_id="branch_task",
+    #     #python_callable=branch_func,
+    #     python_callable="first_task",
+    #     provide_context=True
+    # )
 
     first_task = KubernetesPodOperator(
         namespace=namespace,
@@ -136,4 +136,4 @@ with dag:
 
     # branch_op >> [first_task, second_task] >> third_task
     #third_task
-    branch_op >> first_task >> third_task
+    first_task >> third_task
