@@ -132,4 +132,4 @@ with dag:
         trigger_rule=TriggerRule.ALL_SUCCESS
     )
 
-    branch_op >> [first_task, second_task] >> third_task
+    branch_op >> first_task >> third_task
