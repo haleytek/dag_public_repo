@@ -135,5 +135,5 @@ with dag:
     )
 
     # branch_op >> [first_task, second_task] >> third_task
-    #third_task
-    first_task >> third_task
+    third_task
+    #first_task >> third_task
