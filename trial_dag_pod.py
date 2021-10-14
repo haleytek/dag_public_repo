@@ -129,7 +129,8 @@ with dag:
 
     third_task = BashOperator(
         task_id = 'third_example',
-        bash_command = 'git clone https://github.com/haleytek/dag_public_repo.git /opt/bitnami/airflow/qwerty && echo this_actually_works',
+        #bash_command = 'git clone https://github.com/haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo this_actually_works',
+        bash_command = 'git clone git@github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo this_actually_works',
         dag = dag,
         trigger_rule=TriggerRule.ONE_SUCCESS
     )
