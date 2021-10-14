@@ -43,23 +43,23 @@ compute_resources = \
      'limit_memory': '3Gi'}
 
 with dag:
-    def branch_func(**kwargs):
-        pprint(kwargs['dag_run'].conf)
-        trigger_params = kwargs['dag_run'].conf
-        if "branch" in trigger_params.keys():
-            if trigger_params.get("branch") == "first":
-                return "first_task"
-            else:
-                return "second_task"
-        else:
-            return "second_task"
-        #return first_task
+    # def branch_func(**kwargs):
+    #     pprint(kwargs['dag_run'].conf)
+    #     trigger_params = kwargs['dag_run'].conf
+    #     if "branch" in trigger_params.keys():
+    #         if trigger_params.get("branch") == "first":
+    #             return "first_task"
+    #         else:
+    #             return "second_task"
+    #     else:
+    #         return "second_task"
+    #     #return first_task
 
-    branch_op = BranchPythonOperator(
-        task_id="branch_task",
-        python_callable=branch_func,
-        provide_context=True
-    )
+    # branch_op = BranchPythonOperator(
+    #     task_id="branch_task",
+    #     python_callable=branch_func,
+    #     provide_context=True
+    # )
 
     first_task = KubernetesPodOperator(
         namespace=namespace,
@@ -133,4 +133,5 @@ with dag:
         #trigger_rule=TriggerRule.ALL_SUCCESS
     )
 
-    branch_op >> first_task >> third_task
+    #branch_op >> second_task >> third_task
+    third_task
