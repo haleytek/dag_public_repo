@@ -45,14 +45,15 @@ compute_resources = \
 with dag:
     def branch_func(**kwargs):
         pprint(kwargs['dag_run'].conf)
-        trigger_params = kwargs['dag_run'].conf
-        if "branch" in trigger_params.keys():
-            if trigger_params.get("branch") == "first":
-                return "first_task"
-            else:
-                return "second_task"
-        else:
-            return "second_task"
+        #trigger_params = kwargs['dag_run'].conf
+        # if "branch" in trigger_params.keys():
+        #     if trigger_params.get("branch") == "first":
+        #         return "first_task"
+        #     else:
+        #         return "second_task"
+        # else:
+        #     return "second_task"
+        return first_task
 
     branch_op = BranchPythonOperator(
         task_id="branch_task",
@@ -93,37 +94,37 @@ with dag:
         ]
     )
 
-    second_task = KubernetesPodOperator(
-        namespace=namespace,
-        image="ubuntu:16.04",
-        cmds=["bash", "-cx"],
-        arguments=[
-            "cd /usr/local/tmp && apt-get -y update && apt-get -y install git build-essential && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
-        labels={"foo": "bar"},
-        name="airflow-test-pod",
-        task_id="second_task",
-        # if set to true, will look in the cluster, if false, looks for file
-        in_cluster=in_cluster,
-        # is ignored when in_cluster is set to True
-        cluster_context='airflowpool-admin',
-        config_file=config_file,
-        resources=compute_resources,
-        is_delete_operator_pod=True,
-        get_logs=True,
-        volumes=[
-            Volume("azure-managed-disk-haleytek-gate",
-                   {
-                       "persistentVolumeClaim":
-                           {
-                               "claimName": "azure-managed-disk-haleytek-gate"
-                           }
-                   })
-        ],
-        volume_mounts=[
-            VolumeMount("azure-managed-disk-haleytek-gate",
-                        "/usr/local/tmp", sub_path=None, read_only=False)
-        ]
-    )
+    # second_task = KubernetesPodOperator(
+    #     namespace=namespace,
+    #     image="ubuntu:16.04",
+    #     cmds=["bash", "-cx"],
+    #     arguments=[
+    #         "cd /usr/local/tmp && apt-get -y update && apt-get -y install git build-essential && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
+    #     labels={"foo": "bar"},
+    #     name="airflow-test-pod",
+    #     task_id="second_task",
+    #     # if set to true, will look in the cluster, if false, looks for file
+    #     in_cluster=in_cluster,
+    #     # is ignored when in_cluster is set to True
+    #     cluster_context='airflowpool-admin',
+    #     config_file=config_file,
+    #     resources=compute_resources,
+    #     is_delete_operator_pod=True,
+    #     get_logs=True,
+    #     volumes=[
+    #         Volume("azure-managed-disk-haleytek-gate",
+    #                {
+    #                    "persistentVolumeClaim":
+    #                        {
+    #                            "claimName": "azure-managed-disk-haleytek-gate"
+    #                        }
+    #                })
+    #     ],
+    #     volume_mounts=[
+    #         VolumeMount("azure-managed-disk-haleytek-gate",
+    #                     "/usr/local/tmp", sub_path=None, read_only=False)
+    #     ]
+    # )
 
     third_task = BashOperator(
         task_id = 'third_example',
