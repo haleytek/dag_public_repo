@@ -131,7 +131,7 @@ with dag:
         task_id = 'third_example',
         bash_command = 'git clone https://github.com/haleytek/dag_public_repo.git /opt/bitnami/airflow/qwerty && echo this_actually_works',
         dag = dag,
-        trigger_rule=TriggerRule.ALL_SUCCESS
+        trigger_rule=TriggerRule.ONE_SUCCESS
     )
 
     branch_op >> [first_task, second_task] >> third_task
