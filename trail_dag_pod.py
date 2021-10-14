@@ -4,7 +4,7 @@ from pprint import pprint
 from airflow import DAG
 from airflow import configuration as conf
 from airflow.operators.python import BranchPythonOperator
-from airflow.operators.bash impo
+from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
 from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
