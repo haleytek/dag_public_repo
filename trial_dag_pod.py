@@ -131,7 +131,8 @@ with dag:
         task_id = 'third_example',
         #bash_command = 'git clone https://github.com/haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo this_actually_works',
         #bash_command = 'export GIT_SSH_COMMAND="ssh -i /opt/bitnami/.ssh/config" && git clone @github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo this_actually_works',
-        bash_command = 'git clone git@github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv -key /opt/bitnami/.ssh/config && echo this_actually_works',
+        #bash_command = 'git clone git@github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv -key /opt/bitnami/.ssh/config && echo this_actually_works',
+        bash_command = 'whoami && echo THIS_ACTUALLY_WORKS',
         dag = dag,
         trigger_rule=TriggerRule.ONE_SUCCESS
     )
