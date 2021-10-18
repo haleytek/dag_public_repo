@@ -8,6 +8,8 @@ from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
 from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
+from lib.kubernetes_utils import get_available_pvc
+
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -58,6 +60,7 @@ with dag:
         provide_context=True
     )
 
+
     first_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
@@ -81,7 +84,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": "azure-managed-disk"
+                               "claimName": get_available_pvc()
                            }
                    })
         ],
@@ -113,7 +116,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": "azure-managed-disk-haleytek-gate"
+                               "claimName": get_available_pvc()
                            }
                    })
         ],
