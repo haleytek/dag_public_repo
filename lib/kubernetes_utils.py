@@ -26,11 +26,6 @@ def get_available_pvc() -> List[str]:
                                                                          body={
                                                                              'metadata': {'labels': {'taken': 'True'}}})
                         return pvc.metadata.name
-        else:
-            kubectl.patch_namespaced_persistent_volume_claim(name=pvc.metadata.name,
-                                                             namespace=pvc.metadata.namespace,
-                                                             body={'metadata': {'labels': {'taken': 'True'}}})
-            return pvc.metadata.name
     return None
 
 
