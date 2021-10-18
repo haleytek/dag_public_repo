@@ -60,9 +60,7 @@ with dag:
         provide_context=True
     )
 
-    pvc1 = get_available_pvc()
 
-    pprint("logesh:" + pvc1)
     first_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
@@ -86,7 +84,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": pvc1
+                               "claimName": get_available_pvc()
                            }
                    })
         ],
@@ -95,8 +93,7 @@ with dag:
                         "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
-    pvc2 = get_available_pvc()
-    pprint("logesh:" + pvc2)
+
     second_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
@@ -119,7 +116,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": pvc2
+                               "claimName": get_available_pvc()
                            }
                    })
         ],
