@@ -81,7 +81,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": "azure-managed-disk-haleytek-gate"
+                               "claimName": "azure-managed-disk"
                            }
                    })
         ],
