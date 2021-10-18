@@ -5,7 +5,7 @@ from kubernetes import client, config
 
 
 def get_available_pvc() -> List[str]:
-    config.load_kube_config()
+    config.load_kube_config(config_file="/opt/bitnami/airflow/.kube/config")
     kubectl = client.CoreV1Api()
     pvcs = kubectl.list_persistent_volume_claim_for_all_namespaces()
 
