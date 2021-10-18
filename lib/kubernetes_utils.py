@@ -15,7 +15,7 @@ def get_available_pvc() -> List[str]:
         return result.stdout
 
     for pvc in pvcs.items:
-        if 'taken' in pvc.metadata.labels.keys() and pvc.metadata.labels.taken != 'True':
+        if 'taken' in pvc.metadata.labels.keys() and pvc.metadata.labels['taken'] != 'True':
             ret = out("kubectl describe pvc " + pvc.metadata.name + " --kubeconfig=" + kube_config)
             # this requires kubectl installed on all airflow hosts
             for line in ret.splitlines():
