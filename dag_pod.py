@@ -49,10 +49,10 @@ with dag:
         if "branch" in trigger_params.keys():
             if trigger_params.get("branch") == "first":
                 return "first_task"
-            else:
+            elif trigger_params.get("branch") == "second":
                 return "second_task"
         else:
-            return "second_task"
+            return ["first_task", "second_task"]
 
     branch_op = BranchPythonOperator(
         task_id="branch_task",
