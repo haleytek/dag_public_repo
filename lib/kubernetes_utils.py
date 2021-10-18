@@ -9,13 +9,19 @@ def get_available_pvc() -> List[str]:
     config.load_kube_config(config_file=kube_config)
     kubectl = client.CoreV1Api()
     pvcs = kubectl.list_persistent_volume_claim_for_all_namespaces()
+
     def out(command):
         result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
         return result.stdout
+
     for pvc in pvcs.items:
         ret = out("kubectl describe pvc " + pvc.metadata.name + " --kubeconfig=" + kube_config)
+        # this requires kubectl installed on all airflow hosts
         for line in ret.splitlines():
             if line.startswith("Used By:"):
                 if "<none>" in line:
+                    kubectl.patch_namespaced_persistent_volume_claim(name=pvc.metadata.name,
+                                                                     namespace=pvc.metadata.namespace,
+                                                                     body={'metadata': {'labels': {'taken': True}}})
                     return pvc.metadata.name
     return None
