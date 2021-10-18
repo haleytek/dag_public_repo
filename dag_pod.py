@@ -3,12 +3,12 @@ from pprint import pprint
 
 from airflow import DAG
 from airflow import configuration as conf
-from airflow.operators.python import BranchPythonOperator
+from airflow.operators.python import BranchPythonOperator, PythonOperator
 from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
 from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
-from lib.kubernetes_utils import get_available_pvc
+from lib.kubernetes_utils import get_available_pvc, free_pvc
 
 default_args = {
     'owner': 'airflow',
@@ -129,4 +129,5 @@ with dag:
         ]
     )
 
-    branch_op >> [first_task, second_task]
+    last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': [pvc1, pvc2]})
+    branch_op >> [first_task, second_task] >> last_task
