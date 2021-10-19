@@ -133,5 +133,3 @@ with dag:
 
     last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': [pvc1, pvc2]})
     branch_op >> [first_task, second_task, last_task]
-    first_task >> last_task
-    second_task >> last_task
