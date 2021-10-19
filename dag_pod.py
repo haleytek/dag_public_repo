@@ -86,7 +86,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": get_available_pvc
+                               "claimName": '{{ dag_run.conf["pvc"] }}'
                            }
                    })
         ],
@@ -118,7 +118,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": get_available_pvc
+                               "claimName": '{{ dag_run.conf["pvc"] }}'
                            }
                    })
         ],
