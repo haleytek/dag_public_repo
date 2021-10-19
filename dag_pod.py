@@ -62,7 +62,7 @@ with dag:
         provide_context=True
     )
 
-    def create_task1(context):
+    def create_task1(**kwargs):
         pvc = get_available_pvc()
         print("##########################################################")
         print(pvc)
@@ -98,7 +98,7 @@ with dag:
                             "/usr/local/tmp", sub_path=None, read_only=False)
             ]
         )
-        first_task.execute(context)
+        first_task.execute()
 
     first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_task1, provide_context=True)
     second_task = KubernetesPodOperator(
