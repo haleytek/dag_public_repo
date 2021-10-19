@@ -48,7 +48,7 @@ with dag:
         trigger_params = kwargs['dag_run'].conf
         if "branch" in trigger_params.keys():
             if trigger_params.get("branch") == "first":
-                return "first_task"
+                return "first_task_pv_allocation"
             elif trigger_params.get("branch") == "second":
                 return "second_task"
             elif trigger_params.get("branch") == "last":
@@ -62,40 +62,45 @@ with dag:
         provide_context=True
     )
 
-    
-    first_task = KubernetesPodOperator(
-        namespace=namespace,
-        image="ubuntu:16.04",
-        cmds=["bash", "-cx"],
-        arguments=[
-            "ls -la /usr/local/tmp && echo hello world >> /usr/local/tmp/PV.txt && ls -la /usr/local/tmp && cat /usr/local/tmp/PV.txt"],
-        # arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
-        labels={"foo": "bar"},
-        name="airflow-test-pod",
-        task_id="first_task",
-        # if set to true, will look in the cluster, if false, looks for file
-        in_cluster=in_cluster,
-        # is ignored when in_cluster is set to True
-        cluster_context='airflowpool-admin',
-        config_file=config_file,
-        resources=compute_resources,
-        is_delete_operator_pod=True,
-        get_logs=True,
-        volumes=[
-            Volume("azure-managed-disk-haleytek-gate",
-                   {
-                       "persistentVolumeClaim":
-                           {
-                               "claimName": 'azure-managed-disk-haleytek-gate'
-                           }
-                   })
-        ],
-        volume_mounts=[
-            VolumeMount("azure-managed-disk-haleytek-gate",
-                        "/usr/local/tmp", sub_path=None, read_only=False)
-        ]
-    )
+    def create_task1(context):
+        pvc = get_available_pvc()
+        print("##########################################################")
+        print(pvc)
+        first_task = KubernetesPodOperator(
+            namespace=namespace,
+            image="ubuntu:16.04",
+            cmds=["bash", "-cx"],
+            arguments=[
+                "ls -la /usr/local/tmp && echo hello world >> /usr/local/tmp/PV.txt && ls -la /usr/local/tmp && cat /usr/local/tmp/PV.txt"],
+            # arguments=["ls", "-la", "/usr/local/tmp", "&&", "echo", "hello world", ">>", "/usr/local/tmp/PV.txt", "&&", "ls", "-la", "/usr/local/tmp", "&&", "cat", "/usr/local/tmp/PV.txt"],
+            labels={"foo": "bar"},
+            name="airflow-test-pod",
+            task_id="first_task",
+            # if set to true, will look in the cluster, if false, looks for file
+            in_cluster=in_cluster,
+            # is ignored when in_cluster is set to True
+            cluster_context='airflowpool-admin',
+            config_file=config_file,
+            resources=compute_resources,
+            is_delete_operator_pod=True,
+            get_logs=True,
+            volumes=[
+                Volume("azure-managed-disk-haleytek-gate",
+                       {
+                           "persistentVolumeClaim":
+                               {
+                                   "claimName": pvc
+                               }
+                       })
+            ],
+            volume_mounts=[
+                VolumeMount("azure-managed-disk-haleytek-gate",
+                            "/usr/local/tmp", sub_path=None, read_only=False)
+            ]
+        )
+        first_task.execute(context)
 
+    first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_task1, provide_context=True)
     second_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
@@ -129,4 +134,4 @@ with dag:
     )
     
     last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': ["azure-managed-disk-haleytek-gate","azure-managed-disk"]})
-    branch_op >> [first_task, second_task, last_task]
+    branch_op >> [first_task_pv_allocation, second_task, last_task]
