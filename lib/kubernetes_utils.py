@@ -34,7 +34,8 @@ def free_pvc(pvc_names: List[str], pvc_namespace: str = 'default'):
     config.load_kube_config(config_file=kube_config)
     kubectl = client.CoreV1Api()
     for pvc_name in pvc_names:
-        kubectl.patch_namespaced_persistent_volume_claim(name=pvc_name,
+        ret = kubectl.patch_namespaced_persistent_volume_claim(name=pvc_name,
                                                          namespace=pvc_namespace,
                                                          body={'metadata': {'labels': {'taken': 'False'}}})
+        print(ret)
     return pvc_names
