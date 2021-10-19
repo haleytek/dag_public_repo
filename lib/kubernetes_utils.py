@@ -16,11 +16,11 @@ def get_available_pvc() -> List[str]:
 
     for pvc in pvcs.items:
         if 'taken' in pvc.metadata.labels.keys() and pvc.metadata.labels['taken'] != 'True':
-            ret = out("kubectl describe pvc " + pvc.metadata.name + " --kubeconfig=" + kube_config)
+            #ret = out("kubectl describe pvc " + pvc.metadata.name + " --kubeconfig=" + kube_config)
             # this requires kubectl installed on all airflow hosts
-            for line in ret.splitlines():
-                if line.startswith("Used By:"):
-                    if "<none>" in line:
+            #for line in ret.splitlines():
+            #    if line.startswith("Used By:"):
+            #        if "<none>" in line:
                         kubectl.patch_namespaced_persistent_volume_claim(name=pvc.metadata.name,
                                                                          namespace=pvc.metadata.namespace,
                                                                          body={
