@@ -86,7 +86,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": get_available_pvc()
+                               "claimName": get_available_pvc
                            }
                    })
         ],
@@ -96,8 +96,6 @@ with dag:
         ]
     )
 
-    pvc2 = get_available_pvc()
-    pprint(pvc2)
     second_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
@@ -120,7 +118,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": get_available_pvc()
+                               "claimName": get_available_pvc
                            }
                    })
         ],
