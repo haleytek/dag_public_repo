@@ -38,4 +38,6 @@ def free_pvc(pvc_names: List[str], pvc_namespace: str = 'default'):
                                                          namespace=pvc_namespace,
                                                          body={'metadata': {'labels': {'taken': 'False', 'test': 'logesh'}}})
         print(ret)
+        print(kubectl.read_namespaced_persistent_volume_claim(name=pvc_name,
+                                                         namespace=pvc_namespace))
     return pvc_names
