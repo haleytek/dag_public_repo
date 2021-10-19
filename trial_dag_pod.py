@@ -132,7 +132,7 @@ with dag:
         #bash_command = 'git clone https://github.com/haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo this_actually_works',
         #bash_command = 'GIT_SSH_COMMAND=\'ssh -i /opt/bitnami/airflow/id_rsa\' && git clone git@github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo THIS_ACTUALLY_WORKS',
         #bash_command = 'git clone @github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv  && echo THIS_ACTUALLY_WORKS',
-        bash_command = 'ssh -i /opt/bitnami/airflow/id_rsa -p 29418 "vishrut@qa-source-secure.haleytek.net" gerrit review --code-review +1 1,2',
+        bash_command = 'ssh -o "StrictHostKeyChecking=no" -p 29418 "vishrut@qa-source-secure.haleytek.net" gerrit review --code-review +1 1,2',
         dag = dag,
         trigger_rule=TriggerRule.ONE_SUCCESS
     )
