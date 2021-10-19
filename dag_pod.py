@@ -51,8 +51,6 @@ with dag:
                 return "first_task_pv_allocation"
             elif trigger_params.get("branch") == "second":
                 return "second_task"
-            elif trigger_params.get("branch") == "last":
-                return "last_task"
         else:
             return ["first_task", "second_task"]
 
@@ -99,8 +97,11 @@ with dag:
             ]
         )
         first_task.execute(context)
-
+        release_pvc = PythonOperator(task_id="release_pvc", python_callable=free_pvc,
+                                   op_kwargs={'pvc_names': pvc}, trigger_rule='all_done')
+        first_task.set_downstream(release_pvc)
     first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_task1, provide_context=True)
+
     second_task = KubernetesPodOperator(
         namespace=namespace,
         image="ubuntu:16.04",
@@ -133,5 +134,5 @@ with dag:
         ]
     )
     
-    last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': ["azure-managed-disk-haleytek-gate","azure-managed-disk"]})
-    branch_op >> [first_task_pv_allocation, second_task, last_task]
+
+    branch_op >> [first_task_pv_allocation, second_task]
