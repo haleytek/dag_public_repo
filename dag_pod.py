@@ -97,10 +97,10 @@ with dag:
             ],
             dag=dag
         )
-        first_task.execute(context)
         release_pvc = PythonOperator(task_id="release_pvc", python_callable=free_pvc,
                                    op_kwargs={'pvc_names': pvc}, trigger_rule='all_done', dag=dag)
         first_task.set_downstream(release_pvc)
+        first_task.execute(context)
     first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_task1, provide_context=True)
 
     second_task = KubernetesPodOperator(
