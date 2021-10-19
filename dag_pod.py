@@ -130,6 +130,6 @@ with dag:
                         "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
-
-    last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': [pvc1, pvc2]})
+    
+    last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': {{ dag_run.conf['pvcs'] }}})
     branch_op >> [first_task, second_task, last_task]
