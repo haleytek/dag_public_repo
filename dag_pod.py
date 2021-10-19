@@ -131,5 +131,5 @@ with dag:
         ]
     )
     
-    last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': context['dag_run'].conf['pvcs']})
+    last_task = PythonOperator(task_id="last_task", python_callable=free_pvc, op_kwargs={'pvc_names': '{{ dag_run.conf['pvcs'] }}'})
     branch_op >> [first_task, second_task, last_task]
