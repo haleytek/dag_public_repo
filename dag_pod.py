@@ -86,7 +86,7 @@ with dag:
                    {
                        "persistentVolumeClaim":
                            {
-                               "claimName": '{{ dag_run.conf["pvc"] }}'
+                               "claimName": 'azure-managed-disk-haleytek-gate'
                            }
                    })
         ],
