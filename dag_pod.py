@@ -52,7 +52,7 @@ with dag:
             elif trigger_params.get("branch") == "second":
                 return "second_task"
         else:
-            return ["first_task", "second_task"]
+            return ["first_task_pv_allocation", "second_task"]
 
     branch_op = BranchPythonOperator(
         task_id="branch_task",
@@ -61,7 +61,7 @@ with dag:
     )
 
     def create_task1(**context):
-        pvc = get_available_pvc()
+        pvc = get_available_pvc() # having this one level up will run everytime the dag is loaded to airflow
         print("##########################################################")
         print(pvc)
         first_task = KubernetesPodOperator(
