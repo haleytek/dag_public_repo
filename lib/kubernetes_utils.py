@@ -36,6 +36,6 @@ def free_pvc(pvc_names: List[str], pvc_namespace: str = 'default'):
     for pvc_name in pvc_names:
         ret = kubectl.patch_namespaced_persistent_volume_claim(name=pvc_name,
                                                          namespace=pvc_namespace,
-                                                         body={'metadata': {'labels': {'taken': 'False'}}})
+                                                         body={'metadata': {'labels': {'taken': 'False', 'test': 'logesh'}}})
         print(ret)
     return pvc_names
