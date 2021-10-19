@@ -94,11 +94,12 @@ with dag:
             volume_mounts=[
                 VolumeMount("azure-managed-disk-haleytek-gate",
                             "/usr/local/tmp", sub_path=None, read_only=False)
-            ]
+            ],
+            dag=dag
         )
         first_task.execute(context)
         release_pvc = PythonOperator(task_id="release_pvc", python_callable=free_pvc,
-                                   op_kwargs={'pvc_names': pvc}, trigger_rule='all_done')
+                                   op_kwargs={'pvc_names': pvc}, trigger_rule='all_done', dag=dag)
         first_task.set_downstream(release_pvc)
     first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_task1, provide_context=True)
 
