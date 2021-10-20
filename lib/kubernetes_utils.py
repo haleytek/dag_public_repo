@@ -35,12 +35,15 @@ def free_pvc(pvc_names: List[str], pvc_namespace: str = 'default'):
     config.load_kube_config(config_file=kube_config)
     kubectl = client.CoreV1Api()
     for pvc_name in pvc_names:
-        print("status before labeling:" + str(kubectl.read_namespaced_persistent_volume_claim(name=pvc_name,
-                                                                                              namespace=pvc_namespace).metadata.labels))
-        print(kubectl.patch_namespaced_persistent_volume_claim(name=pvc_name,
-                                                               namespace=pvc_namespace,
-                                                               body={'metadata': {
-                                                                   'labels': {'taken': 'False'}}}))
-        print("status after labeling:" + str(kubectl.read_namespaced_persistent_volume_claim(name=pvc_name,
+        if pvc_name is not None:
+            print("status before labeling:" + str(kubectl.read_namespaced_persistent_volume_claim(name=pvc_name,
+                                                                                                  namespace=pvc_namespace).metadata.labels))
+            print(kubectl.patch_namespaced_persistent_volume_claim(name=pvc_name,
+                                                                   namespace=pvc_namespace,
+                                                                   body={'metadata': {
+                                                                       'labels': {'taken': 'False'}}}))
+            print("status after labeling:" + str(kubectl.read_namespaced_persistent_volume_claim(name=pvc_name,
                                                                                              namespace=pvc_namespace).metadata.labels))
+        else:
+            print("received None as pvc to release so ignoring this step")
     return pvc_names
