@@ -50,9 +50,12 @@ with dag:
             if trigger_params.get("branch") == "first":
                 return "first_task_pv_allocation"
             elif trigger_params.get("branch") == "second":
+                print(kwargs)
+                #context['ti'].xcom_push(key="Airflow", value="Apache Incubating")
                 return "second_task"
         else:
             return ["first_task_pv_allocation", "second_task"]
+
 
     branch_op = BranchPythonOperator(
         task_id="branch_task",
@@ -60,10 +63,10 @@ with dag:
         provide_context=True
     )
 
-    def create_task1(**context):
-        pvc = get_available_pvc() # having this one level up will run everytime the dag is loaded to airflow
-        print("##########################################################")
-        print(pvc)
+
+    def create_first_task(**context):
+        pvc = get_available_pvc()  # having this one level up will run everytime the dag is loaded to airflow
+        print("Allocated PVC: " + pvc)
         first_task = KubernetesPodOperator(
             namespace=namespace,
             image="ubuntu:16.04",
@@ -98,10 +101,13 @@ with dag:
             dag=dag
         )
         release_pvc = PythonOperator(task_id="release_pvc", python_callable=free_pvc,
-                                   op_kwargs={'pvc_names': [pvc]}, trigger_rule='all_done', dag=dag)
+                                     op_kwargs={'pvc_names': [pvc]}, trigger_rule='all_done', dag=dag)
         first_task.execute(context)
         release_pvc.execute(context)
-    first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_task1, provide_context=True)
+
+
+    first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_first_task,
+                                              provide_context=True)
 
     second_task = KubernetesPodOperator(
         namespace=namespace,
@@ -134,6 +140,5 @@ with dag:
                         "/usr/local/tmp", sub_path=None, read_only=False)
         ]
     )
-    
 
     branch_op >> [first_task_pv_allocation, second_task]
