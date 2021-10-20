@@ -64,7 +64,7 @@ with dag:
 
     def create_first_task(**context):
         pvc = get_available_pvc()  # having this one level up will run everytime the dag is loaded to airflow
-        print("Allocated PVC: " + pvc)
+        print("Allocated PVC: " + str(pvc))
         first_task = KubernetesPodOperator(
             namespace=namespace,
             image="ubuntu:16.04",
