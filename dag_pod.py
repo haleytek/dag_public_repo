@@ -50,8 +50,7 @@ with dag:
             if trigger_params.get("branch") == "first":
                 return "first_task_pv_allocation"
             elif trigger_params.get("branch") == "second":
-                print(kwargs)
-                #context['ti'].xcom_push(key="Airflow", value="Apache Incubating")
+                #kwargs['ti'].xcom_push(key="second_task_pvc", value=get_available_pvc())
                 return "second_task"
         else:
             return ["first_task_pv_allocation", "second_task"]
