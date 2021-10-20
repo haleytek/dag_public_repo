@@ -7,13 +7,13 @@ from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMoun
 
 
 class HaleyTekKubeOperator(KubernetesPodOperator):
-    template_fields = ["pvcs"]
+    template_fields = ["pvcs", "volumes", "volume_mounts"]
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.pvcs = []
 
     def execute(self, context) -> Optional[str]:
-        self.pvcs = get_available_pvc()
+        self.pvcs = [get_available_pvc()]
         # self.volumes = []
         # self.volume_mounts = []
         # for pvc in self.pvcs:
