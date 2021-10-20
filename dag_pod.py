@@ -112,8 +112,9 @@ with dag:
         namespace=namespace,
         image="ubuntu:16.04",
         cmds=["bash", "-cx"],
-        arguments=[
-            "cd /usr/local/tmp && apt-get -y update && apt-get -y install git build-essential && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
+        # arguments=[
+        #     "cd /usr/local/tmp && apt-get -y update && apt-get -y install git build-essential && rm -rf dag_test_repo_to_sync &&git clone https://github.com/haleytek/dag_test_repo_to_sync.git && cd dag_test_repo_to_sync && make && ./hellomake"],
+        arguments=["echo", "hello"],
         labels={"foo": "bar"},
         name="airflow-test-pod",
         task_id="second_task",
