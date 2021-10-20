@@ -27,7 +27,8 @@ def get_available_pvc() -> List[str]:
                                                                    body={'metadata': {'labels': {'taken': 'True'}}}))
             print("Taken: " + str(pvc.metadata.name))
             return pvc.metadata.name
-    return None
+    return "azure-managed-disk"  # hardcoded for development debugging
+    #return None
 
 
 def free_pvc(pvc_names: List[str], pvc_namespace: str = 'default'):
