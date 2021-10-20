@@ -65,7 +65,7 @@ with dag:
     def create_first_task(**context):
         pvc = get_available_pvc()  # having this one level up will run everytime the dag is loaded to airflow
         print("Allocated PVC: " + str(pvc))
-        first_task = KubernetesPodOperator(
+        pod_operation = KubernetesPodOperator(
             namespace=namespace,
             image="ubuntu:16.04",
             cmds=["bash", "-cx"],
@@ -99,7 +99,7 @@ with dag:
             dag=dag
         )
         try:
-            first_task.execute(context)
+            pod_operation.execute(context)
         finally:
             free_pvc([pvc])
 
