@@ -132,7 +132,7 @@ with dag:
         #bash_command = 'git clone https://github.com/haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo this_actually_works',
         #bash_command = 'GIT_SSH_COMMAND=\'ssh -i /opt/bitnami/airflow/id_rsa\' && git clone git@github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv && echo THIS_ACTUALLY_WORKS',
         #bash_command = 'git clone @github.com:haleytek/dag_public_repo.git /opt/bitnami/airflow/auysfv  && echo THIS_ACTUALLY_WORKS',
-        bash_command = 'echo "PRINTING USER BELOW" && whoami && echo "$HOSTNAME" && ls -all /home/airflow/ && echo "PRINTING THIS BEFORE STARTING THE SSH RUN" && set -x && ssh -p 29418 -i "/home/airflow/.ssh/id_rsa" -o "StrictHostKeyChecking=no" -p 29418 "vishrut@qa-source-secure.haleytek.net" gerrit review --code-review +1 2,1',
+        bash_command = 'echo "PRINTING USER BELOW" && whoami && echo "$HOSTNAME" && ls -all /home/airflow/ && echo "PRINTING THIS BEFORE STARTING THE SSH RUN" && set -x && ssh -p 29418 -i "/home/airflow/.ssh/id_rsa" -o "StrictHostKeyChecking=no" -p 29418 "vishrut@qa-source-secure.haleytek.net" gerrit review --code-review +2 2,2',
         dag = dag,
         trigger_rule=TriggerRule.ONE_SUCCESS
     )
