@@ -31,8 +31,7 @@ class HaleyTekKubeOperator(KubernetesPodOperator):
             convert_volume_mount(VolumeMount(self.volumes[0].name,
                                              "/usr/local/tmp", sub_path=None, read_only=False))]
 
-        super().execute(context)
-
-    def on_kill(self) -> None:
-        super().on_kill()
-        free_pvc(self.pvcs)
+        try:
+            super().execute(context)
+        finally:
+            free_pvc(self.pvcs)
