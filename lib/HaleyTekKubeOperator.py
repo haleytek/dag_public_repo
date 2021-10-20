@@ -11,8 +11,8 @@ class HaleyTekKubeOperator(KubernetesPodOperator):
 
     def execute(self, context):
         self.pvcs = get_available_pvc()
-        self.volumes = []
-        self.volume_mounts = []
+        # self.volumes = []
+        # self.volume_mounts = []
         # for pvc in self.pvcs:
         #     self.volumes.append(
         #         Volume("mounted_volume_name",
