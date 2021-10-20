@@ -13,22 +13,22 @@ class HaleyTekKubeOperator(KubernetesPodOperator):
         self.pvcs = get_available_pvc()
         self.volumes = []
         self.volume_mounts = []
-        for pvc in self.pvcs:
-            self.volumes.append(
-                Volume("mounted_volume_name",
-                       {
-                           "persistentVolumeClaim":
-                               {
-                                   "claimName": pvc
-                               }
-                       })
-            )
-        for volume in self.volumes:
-            # TODO fix the mount path
-            self.volume_mounts.append(
-                VolumeMount(volume.name,
-                            "/usr/local/tmp", sub_path=None, read_only=False)
-            )
+        # for pvc in self.pvcs:
+        #     self.volumes.append(
+        #         Volume("mounted_volume_name",
+        #                {
+        #                    "persistentVolumeClaim":
+        #                        {
+        #                            "claimName": pvc
+        #                        }
+        #                })
+        #     )
+        # for volume in self.volumes:
+        #     # TODO fix the mount path
+        #     self.volume_mounts.append(
+        #         VolumeMount(volume.name,
+        #                     "/usr/local/tmp", sub_path=None, read_only=False)
+        #     )
         super().execute(context)
 
     def on_kill(self) -> None:
