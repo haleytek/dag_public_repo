@@ -12,7 +12,7 @@ class HaleyTekKubeOperator(KubernetesPodOperator):
         self.pvcs = []
 
     def execute(self, context) -> Optional[str]:
-        #self.pvcs = get_available_pvc()
+        self.pvcs = get_available_pvc()
         # self.volumes = []
         # self.volume_mounts = []
         # for pvc in self.pvcs:
@@ -35,4 +35,4 @@ class HaleyTekKubeOperator(KubernetesPodOperator):
 
     def on_kill(self) -> None:
         super().on_kill()
-        #free_pvc(self.pvcs)
+        free_pvc(self.pvcs)
