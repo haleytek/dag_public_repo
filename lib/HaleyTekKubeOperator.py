@@ -4,6 +4,10 @@ from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import Kubernete
 from lib.kubernetes_utils import get_available_pvc, free_pvc
 from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
 from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
+from airflow.providers.cncf.kubernetes.backcompat.backwards_compat_converters import (
+    convert_volume,
+    convert_volume_mount,
+)
 
 
 class HaleyTekKubeOperator(KubernetesPodOperator):
@@ -15,18 +19,18 @@ class HaleyTekKubeOperator(KubernetesPodOperator):
 
     def execute(self, context) -> Optional[str]:
         self.pvcs = [get_available_pvc()]
-        self.volumes = [Volume("mounted_volume_name",
-                               {
-                                   "persistentVolumeClaim":
-                                       {
-                                           "claimName": self.pvcs[0]
-                                       }
-                               })]
+        self.volumes = [convert_volume(Volume("mounted_volume_name",
+                                              {
+                                                  "persistentVolumeClaim":
+                                                      {
+                                                          "claimName": self.pvcs[0]
+                                                      }
+                                              }))]
         # TODO fix the mount path
         self.volume_mounts = [
-            VolumeMount(self.volumes[0].name,
-                        "/usr/local/tmp", sub_path=None, read_only=False)]
-        
+            convert_volume_mount(VolumeMount(self.volumes[0].name,
+                                             "/usr/local/tmp", sub_path=None, read_only=False))]
+
         super().execute(context)
 
     def on_kill(self) -> None:
