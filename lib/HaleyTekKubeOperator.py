@@ -19,7 +19,7 @@ class HaleyTekKubeOperator(KubernetesPodOperator):
 
     def execute(self, context) -> Optional[str]:
         self.pvcs = [get_available_pvc()]
-        self.volumes = [convert_volume(Volume("mounted_volume_name",
+        self.volumes = [convert_volume(Volume("mounted-volume-name",
                                               {
                                                   "persistentVolumeClaim":
                                                       {
