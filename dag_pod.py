@@ -8,6 +8,7 @@ from airflow.providers.cncf.kubernetes.backcompat.volume import Volume
 from airflow.providers.cncf.kubernetes.backcompat.volume_mount import VolumeMount
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
+from lib.HaleyTekKubeOperator import HaleyTekKubeOperator
 from lib.kubernetes_utils import get_available_pvc, free_pvc
 
 default_args = {
@@ -107,7 +108,7 @@ with dag:
     first_task_pv_allocation = PythonOperator(task_id="first_task_pv_allocation", python_callable=create_first_task,
                                               provide_context=True)
 
-    second_task = KubernetesPodOperator(
+    second_task = HaleyTekKubeOperator(
         namespace=namespace,
         image="ubuntu:16.04",
         cmds=["bash", "-cx"],
@@ -124,19 +125,6 @@ with dag:
         resources=compute_resources,
         is_delete_operator_pod=True,
         get_logs=True,
-        volumes=[
-            Volume("azure-managed-disk-haleytek-gate",
-                   {
-                       "persistentVolumeClaim":
-                           {
-                               "claimName": 'azure-managed-disk'
-                           }
-                   })
-        ],
-        volume_mounts=[
-            VolumeMount("azure-managed-disk-haleytek-gate",
-                        "/usr/local/tmp", sub_path=None, read_only=False)
-        ]
     )
 
     branch_op >> [first_task_pv_allocation, second_task]
