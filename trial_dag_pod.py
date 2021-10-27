@@ -1,3 +1,5 @@
+import os
+
 from datetime import datetime, timedelta
 from pprint import pprint
 
@@ -25,11 +27,13 @@ namespace = conf.get('kubernetes', 'NAMESPACE')
 # This will detect the default namespace locally and read the
 # environment namespace when deployed to Astronomer.
 if namespace == 'default':
-    config_file = '/opt/bitnami/airflow/.kube/config'
+    config_file = os.getenv('AIRFLOW__KUBERNETES__CONFIG_FILE', '/opt/bitnami/airflow/.kube/config')
+    cluster_context = os.getenv('AIRFLOW__KUBERNETES__CLUSTER_CONTEXT', 'airflowpool-admin')
     in_cluster = False
 else:
     in_cluster = True
     config_file = None
+    cluster_context = None
 
 dag = DAG('notAKube_pod',
           schedule_interval='@once',
@@ -75,7 +79,7 @@ with dag:
         # if set to true, will look in the cluster, if false, looks for file
         in_cluster=in_cluster,
         # is ignored when in_cluster is set to True
-        cluster_context='airflowpool-admin',
+        cluster_context=cluster_context,
         config_file=config_file,
         resources=compute_resources,
         is_delete_operator_pod=True,
@@ -107,7 +111,7 @@ with dag:
         # if set to true, will look in the cluster, if false, looks for file
         in_cluster=in_cluster,
         # is ignored when in_cluster is set to True
-        cluster_context='airflowpool-admin',
+        cluster_context=cluster_context,
         config_file=config_file,
         resources=compute_resources,
         is_delete_operator_pod=True,
